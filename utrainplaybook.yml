@@ -1,0 +1,68 @@
+---
+- hosts: webserver
+  become: yes
+  tasks:
+  - name: Installing Apache on webservers
+    yum:
+      name: httpd
+      state: latest
+    notify: 
+    - Starting the deamon/service httpd on webservers
+    - Enabling the deamon
+
+  - name: Creating teh user Sylvia
+    user:
+      name: "{{user}}"
+      comment: "{{firstlast}}"
+  - debug:
+      msg: "The user syslvia has been created"
+
+
+
+- hosts: web1
+  become: yes
+  tasks:
+  - name: Fetching the file 'pros.txt'
+    fetch:
+      src: /home/okay/path/pros.txt
+      dest: /root/utrain
+  - debug:
+      msg: "The file 'pros.txt' has been fetched from 'web1' to '/root/utrain' "
+
+
+#- hosts: tomcat
+#  become: yes
+#  tasks:
+#  - name: Creating the users in the tomcats
+#    user:
+#      name: "{{dir}}"
+#      comment: Ethel jackson 
+#    loops:
+#    - Ethel1 
+#    - Ethel2  
+
+
+- hosts: database
+  become: yes
+  tasks:
+  - name: Installing Mysql on the database server
+    yum:
+      name: mysql
+      state: present
+
+  
+  handlers:
+  - name: Starting the deamon/service httpd on webservers
+    systemd:
+      name: httpd
+      state: started
+  - debug:
+      msg: "The httpd deamon has been started"
+
+  - name: Enabling the deamon
+    systemd:
+      name: httpd
+      enabled: yes
+  - debug:
+      msg: "The deamon has been started"
+      
